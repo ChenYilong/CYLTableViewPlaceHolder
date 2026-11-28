@@ -28,6 +28,17 @@ final class CYLRefreshDrivenHostTests: XCTestCase {
         RunLoop.main.run(until: Date(timeIntervalSinceNow: seconds))
     }
 
+    // [EN] Polls for a state an animation completion produces (a busy CI runner stretches animations); the assertions after it
+    //      report a timeout. [CN] 轮询由动画完成产生的状态（繁忙的 CI 机器会拉长动画）；超时由其后的断言报告。
+    @discardableResult
+    private func waitUntil(timeout: TimeInterval = 15, _ condition: () -> Bool) -> Bool {
+        let deadline = Date(timeIntervalSinceNow: timeout)
+        while !condition() && deadline.timeIntervalSinceNow > 0 {
+            RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.05))
+        }
+        return condition()
+    }
+
     private func host(_ params: [String: Any]?) -> CYLRefreshDrivenHost {
         let host = CYLRefreshDrivenHost(frame: window.bounds, params: params) { [unowned self] name, arguments in
             events.append((name, arguments))
@@ -98,12 +109,12 @@ final class CYLRefreshDrivenHostTests: XCTestCase {
         XCTAssertEqual(events.first?.name, "onPhase")
         XCTAssertEqual(events.first?.arguments?["oldPhase"] as? String, "idle")
         XCTAssertEqual(host.handle(method: "release", arguments: nil), .success)
-        spin()
+        waitUntil { events.filter { $0.name == "onRefreshing" }.count == 1 }
         XCTAssertEqual(host.component.phase, .refreshing)
         XCTAssertEqual(events.filter { $0.name == "onRefreshing" }.count, 1)
         events = []
         XCTAssertEqual(host.handle(method: "finishRefresh", arguments: ["success": true]), .success)
-        spin(1.5)
+        waitUntil { events.compactMap { $0.arguments?["phase"] as? String }.last == "idle" }
         XCTAssertEqual(events.compactMap { $0.arguments?["phase"] as? String }.last, "idle", "the header retracts and reports idle")
         XCTAssertEqual(host.component.phase, .idle)
     }
@@ -128,11 +139,11 @@ final class CYLRefreshDrivenHostTests: XCTestCase {
         drive(host, -(host.component.expandHeight + 10))
         XCTAssertEqual(host.component.phase, .releaseToRefresh)
         XCTAssertEqual(host.handle(method: "release", arguments: nil), .success)
-        spin()
+        waitUntil { events.filter { $0.name == "onRefreshing" }.count == 1 }
         XCTAssertEqual(host.component.phase, .refreshing)
         XCTAssertEqual(events.filter { $0.name == "onRefreshing" }.count, 1)
         XCTAssertEqual(host.handle(method: "finishRefresh", arguments: ["success": true, "noMoreData": true]), .success)
-        spin(1.5)
+        waitUntil { footer.isNoMoreData }
         XCTAssertTrue(footer.isNoMoreData)
         XCTAssertEqual(host.handle(method: "noMoreData", arguments: ["value": false]), .success)
         XCTAssertFalse(footer.isNoMoreData)
@@ -153,7 +164,7 @@ final class CYLRefreshDrivenHostTests: XCTestCase {
         _ = loads.handle(method: "noMoreData", arguments: ["value": true])
         drive(loads, -(loads.component.expandHeight + 10))
         _ = loads.handle(method: "release", arguments: nil)
-        spin()
+        waitUntil { loads.component.isRefreshing }
         XCTAssertTrue(loads.component.isRefreshing)
         XCTAssertFalse((loads.component as! CYLRefreshFooter).isNoMoreData)
     }

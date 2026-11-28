@@ -5,7 +5,7 @@ integrated refresh component, and an iOS example. It inherits the vault's root
 instructions. Read `AGENTS.md` before changing the project.
 
 Rules are grouped by tag. Each line is a summary; follow its link to `docs/instructions/<tag>.md` for the full rule when
-the tag or keyword matches the task. Tags: `behavioral`, `workflow`, `testing`, `ci`, `windows`, `macos`, `harmonyos`, `code`, `l10n-a11y`, `docs`, `git`. Agent rules: `AGENTS.md` (same tags).
+the tag or keyword matches the task. Tags: `behavioral`, `workflow`, `testing`, `ci`, `windows`, `macos`, `harmonyos`, `examples`, `code`, `l10n-a11y`, `docs`, `git`. Agent rules: `AGENTS.md` (same tags).
 
 ## Tag: Behavioral guidelines (`behavioral`)
 
@@ -25,6 +25,7 @@ Recording tasks, scoring, other sessions, porting another project. Full text: [d
 
 Verification, shared emulators, screenshots. Full text: [docs/instructions/testing.md](docs/instructions/testing.md).
 
+- [Emulator run rules: stop the app and the emulator when the test is over](docs/instructions/testing.md#emulator-run-rules-stop-the-app-and-the-emulator-when-the-test-is-over): read before every emulator or simulator run (owner's rule, 2026-11-25). After a test and its screenshots are finished, immediately kill the app and the emulator process; start the emulator again only when needed; never leave them running after the task is done.
 - [Shared emulators: restart a hung emulator](docs/instructions/testing.md#shared-emulators-restart-a-hung-emulator): Several sessions share the Android emulator (`emulator-5556`) and the HarmonyOS emulator (`127.0.0.1:5555`).
 - [Screenshots of local builds and CI/CD](docs/instructions/testing.md#screenshots-of-local-builds-and-cicd): These rules cover every screenshot: local simulator or device runs and CI/CD artifacts.
   - Subsections: [Header and footer on stitched screenshots](docs/instructions/testing.md#header-and-footer-on-stitched-screenshots), [Enforcement: every screenshot passes the checker](docs/instructions/testing.md#enforcement-every-screenshot-passes-the-checker).
@@ -52,6 +53,7 @@ IOS, Xcode, CocoaPods, Swift, zsh vs bash. Full text: [docs/instructions/macos.m
 - [Xcode and CocoaPods project checks](docs/instructions/macos.md#xcode-and-cocoapods-project-checks): When working on a runnable Xcode project, check its Podfile.
 - [Swift examples and a Swift-friendly core](docs/instructions/macos.md#swift-examples-and-a-swift-friendly-core): iOS examples are written in Swift; the library stays Objective-C.
   - Subsections: [Examples](docs/instructions/macos.md#examples), [Making the Objective-C core Swift-friendly](docs/instructions/macos.md#making-the-objective-c-core-swift-friendly), [Examples have the lowest weight (owner's rule, 2026-11-13)](docs/instructions/macos.md#examples-have-the-lowest-weight-owners-rule-2026-11-13).
+- [Simulator rules: stop the app and the simulator after a run (owner's rule, 2026-11-25)](docs/instructions/macos.md#simulator-rules-stop-the-app-and-the-simulator-after-a-run-owners-rule-2026-11-25): **Before running a simulator you must read this rule or the text here:** 运行模拟器 测试截图结束后 ，立即杀掉终止app，以及模拟器进程。使用时在重新启动。避免运行后，任务完毕也不关掉app ，也不关闭模拟器进程。 Same rule as [Emulator run rules](docs/instructions/testing.md#emulator-run-rules-stop-the-app-and-the-emulator-when-the-test-is-over) (all platforms). In English: after a simulator run (tests, screenshots) immediately terminate the app and shut down the simulator process (`xcrun simctl terminate` / `shutdown`, your own UDIDs only, never `shutdown all`); boot it again on the next use; never leave the app or the simulator running after the task.
 - [Running scripts: bash first](docs/instructions/macos.md#running-scripts-bash-first): **Run scripts with bash, not zsh (added 2026-11-16).** The interactive shell here is zsh, which does not split an unquoted variable into words: `for f in $list`, `cmd $args` or `sips $box` get one…
 
 ## Tag: HarmonyOS scenario (`harmonyos`)
@@ -62,6 +64,10 @@ The HarmonyOS port, DevEco Studio, the emulator, arm64-only Rive and PAG. Full t
   - Subsections: [HarmonyOS accessibility and localization (owner's rule, 2026-11-16)](docs/instructions/harmonyos.md#harmonyos-accessibility-and-localization-owners-rule-2026-11-16).
 - [HarmonyOS: IDE preparation and emulator prerequisites (added 2026-11-16)](docs/instructions/harmonyos.md#harmonyos-ide-preparation-and-emulator-prerequisites-added-2026-11-16): Before any HarmonyOS work (building, installing or running a HAP, taking emulator screenshots), check these:
   - Subsections: [Rive and PAG: tests that only run on arm64 (owner's rule, 2026-11-22)](docs/instructions/harmonyos.md#rive-and-pag-tests-that-only-run-on-arm64-owners-rule-2026-11-22).
+
+## Tag: Example demos (`examples`)
+
+- A demo screen that needs a sectioned list (table view with sections) uses CollectionViewClassifyMenu's tag list: titles and icons only, a tail fold control (the last tag is the expand / collapse button, icon only, itself a Liquid Glass tag), a colourful page behind the list (set in one shared place; the library draws one Liquid Glass card per section, the example draws no plate; long headers use headerMaxLines 2, icon colours are static template colours through menuStyleForItem + setIconColor, never .alwaysOriginal), a tap = the cell's tap, a long press = the subtitle in a callout with an arrow, `titleMaxLines` for wrapping titles (never a magic number), a title on every section header, content-wide tags, and the Liquid Glass tag style (`backgroundStyle`, never faked). ([details](docs/instructions/examples.md))
 
 ## Tag: Code and architecture (`code`)
 

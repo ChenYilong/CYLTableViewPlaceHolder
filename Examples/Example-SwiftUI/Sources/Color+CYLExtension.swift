@@ -8,7 +8,7 @@
 import SwiftUI
 
 extension Color {
-    init(cyl_hexString hexString: String, opacity: Double = 1.0) {
+    init(cylHexString hexString: String, opacity: Double = 1.0) {
         let hex = hexString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var int: UInt64 = 0
         Scanner(string: hex).scanHexInt64(&int)

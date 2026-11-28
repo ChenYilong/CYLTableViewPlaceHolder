@@ -14,6 +14,96 @@ import { CYLRefreshPhase, CYLRefreshScrollMode } from '../CYLRefreshConst';
 import { CYLRefreshDrawnHeaderModel } from './CYLRefreshDrawnHeader';
 import { CYLPlaceholderAnimationFileExists } from '../../CYLPlaceholderAnimation';
 
+/** Milliseconds before the finish hold ends at which the Rive view stops drawing (Android `HIDE_LEAD_MILLIS`). */
+const HIDE_LEAD_MILLIS: number = 500;
+
+/**
+ * The drawn-height table of a Rive file (parameter `riveDrawnTable`, Android `CYLRefreshRiveDrawnTable`): pairs
+ * `[pullInput, drawnFraction]` where pullInput is the value sent to the file's pull input and drawnFraction (0...1) is
+ * how much of the header height, from the top, shows the art (the black band at the bottom of a file such as Bow's is
+ * clipped). The fraction is linearly interpolated; below the first pair it is the first fraction, above the last the
+ * last. An empty table does not clip.
+ */
+export class CYLRefreshRiveDrawnTable {
+  /** The table without pairs. */
+  static readonly EMPTY: CYLRefreshRiveDrawnTable = new CYLRefreshRiveDrawnTable([], []);
+  private readonly inputs: number[];
+  private readonly fractions: number[];
+
+  private constructor(inputs: number[], fractions: number[]) {
+    this.inputs = inputs;
+    this.fractions = fractions;
+  }
+
+  /** True when there is no valid pair: no clip. */
+  get isEmpty(): boolean {
+    return this.inputs.length === 0;
+  }
+
+  /** The valid pairs `[input, fraction]`, sorted by input, with the fractions clamped to 0...1. */
+  get pairs(): number[][] {
+    return this.inputs.map((input: number, i: number): number[] => [input, this.fractions[i]]);
+  }
+
+  /** The drawn fraction (0...1) for `input`; null when the table is empty (no clip). */
+  fraction(input: number): number | null {
+    const n = this.inputs.length;
+    if (n === 0) {
+      return null;
+    }
+    if (Number.isNaN(input) || input <= this.inputs[0]) {
+      return this.fractions[0];
+    }
+    if (input >= this.inputs[n - 1]) {
+      return this.fractions[n - 1];
+    }
+    let i = 1;
+    while (this.inputs[i] < input) {
+      i++;
+    }
+    const span = this.inputs[i] - this.inputs[i - 1];
+    if (span <= 0) {
+      return this.fractions[i];
+    }
+    return this.fractions[i - 1] + (this.fractions[i] - this.fractions[i - 1]) * ((input - this.inputs[i - 1]) / span);
+  }
+
+  /**
+   * A table from `raw` (an array of two-number arrays): a malformed element (not an array, fewer than two numbers, a
+   * non-number or non-finite value) is ignored, the rest is sorted by input and the fractions are clamped to 0...1.
+   * Anything that is not an array is the empty table.
+   */
+  static parse(raw: Object | null | undefined): CYLRefreshRiveDrawnTable {
+    if (!Array.isArray(raw)) {
+      return CYLRefreshRiveDrawnTable.EMPTY;
+    }
+    const pairs: number[][] = [];
+    for (const element of raw as Object[]) {
+      if (!Array.isArray(element) || (element as Object[]).length < 2) {
+        continue;
+      }
+      const pair = element as Object[];
+      const input = pair[0];
+      const fraction = pair[1];
+      if (typeof input !== 'number' || typeof fraction !== 'number' || !Number.isFinite(input) ||
+        !Number.isFinite(fraction)) {
+        continue;
+      }
+      pairs.push([input, Math.min(Math.max(fraction, 0), 1)]);
+    }
+    if (pairs.length === 0) {
+      return CYLRefreshRiveDrawnTable.EMPTY;
+    }
+    pairs.sort((a: number[], b: number[]): number => a[0] - b[0]);
+    return new CYLRefreshRiveDrawnTable(pairs.map((p: number[]): number => p[0]), pairs.map((p: number[]): number => p[1]));
+  }
+
+  /** A table from typed `pairs` (a style set in code); validated as `parse`. */
+  static of(pairs: number[][]): CYLRefreshRiveDrawnTable {
+    return CYLRefreshRiveDrawnTable.parse(pairs);
+  }
+}
+
 /**
  * How a Rive file is driven by the pull, the refresh and its end (iOS `CYLRefreshRiveStyle`). Every name is
  * optional; unset (null) ones are skipped.
@@ -68,6 +158,22 @@ export class CYLRefreshRiveStyle {
   loadingAnimation: string | null = null;
   /** Linear animation looped while pulling and idle. */
   idleAnimation: string | null = null;
+  /**
+   * The drawn-height table (parameter `riveDrawnTable`): the fraction of the header height, from the top, that shows
+   * the Rive view as a function of the pull input value actually sent. Empty (default) does not clip.
+   */
+  drawnTable: CYLRefreshRiveDrawnTable = CYLRefreshRiveDrawnTable.EMPTY;
+  /**
+   * Longest time in seconds the header stays open after the refresh ends so that the end of the animation
+   * (`finishTrigger` or the `loadingNumber` finished value) can play (parameter `riveFinishTimeout`); ignored when the
+   * style has neither. Default 1.5.
+   */
+  finishTimeout: number = 1.5;
+
+  /** Whether the style has an end part to play: a `finishTrigger` or a `loadingNumber`. */
+  get playsFinish(): boolean {
+    return this.finishTrigger !== null || this.loadingNumber !== null;
+  }
 
   /** A style for the .riv file at `fileURL` (iOS `initWithFileURL:`). */
   constructor(fileURL: string) {
@@ -137,6 +243,11 @@ export class CYLRefreshRiveHeaderModel extends CYLRefreshDrawnHeaderModel {
   private loadingStart: number = 0;
   private triggerTimer: number = -1;
   private rivePlaysRefresh: boolean = false;
+  private lastInput: number = 0;
+  private collapseHiddenValue: boolean = false;
+  private hiddenListener: ((hidden: boolean) => void) | null = null;
+  private hideTimer: number = -1;
+  private drawnListener: ((fraction: number | null) => void) | null = null;
 
   /** A header drawn by `style` (iOS `initWithStyle:`). */
   constructor(style: CYLRefreshRiveStyle | null = null) {
@@ -177,6 +288,81 @@ export class CYLRefreshRiveHeaderModel extends CYLRefreshDrawnHeaderModel {
     this.setExpandHeight(style.triggerOffset);
   }
 
+  /**
+   * The fraction (0...1) of the header height, from the top, that shows the art for the pull input last sent (the
+   * drawn-height table), or null for no clip. Held through the finish hold, 0 input after the reset.
+   */
+  get cyl_drawnFraction(): number | null {
+    const style = this.styleValue;
+    return style === null ? null : style.drawnTable.fraction(this.lastInput);
+  }
+
+  /** The Rive view's callback for a change of `cyl_drawnFraction`; null removes it. */
+  cyl_setDrawnListener(listener: ((fraction: number | null) => void) | null): void {
+    this.drawnListener = listener;
+  }
+
+  /**
+   * True while the Rive view must not draw: from `HIDE_LEAD_MILLIS` before the finish hold ends, so the black a
+   * hidden surface keeps showing for a few frames while the file resets and the view resizes is never seen. The next
+   * pull (or refresh) shows it again.
+   */
+  get cyl_collapseHidden(): boolean {
+    return this.collapseHiddenValue;
+  }
+
+  /** The Rive view's callback for a change of `cyl_collapseHidden`; null removes it. */
+  cyl_setHiddenListener(listener: ((hidden: boolean) => void) | null): void {
+    this.hiddenListener = listener;
+  }
+
+  private setCollapseHidden(hidden: boolean): void {
+    if (!hidden) {
+      this.cancelHide();
+    }
+    if (this.collapseHiddenValue === hidden) {
+      return;
+    }
+    this.collapseHiddenValue = hidden;
+    if (this.hiddenListener !== null) {
+      this.hiddenListener(hidden);
+    }
+  }
+
+  private cancelHide(): void {
+    if (this.hideTimer >= 0) {
+      clearTimeout(this.hideTimer);
+      this.hideTimer = -1;
+    }
+  }
+
+  /**
+   * The finish rule: `finishTimeout` (at least `finishDuration`) when the style has an end part, else
+   * `finishDuration`. The Rive view is hidden `HIDE_LEAD_MILLIS` before that hold ends.
+   */
+  onRefreshFinishing(success: boolean): number {
+    const style = this.styleValue;
+    const hold = style !== null && style.playsFinish ? Math.max(style.finishTimeout, this.finishDuration) :
+      this.finishDuration;
+    if (style !== null) {
+      this.cancelHide();
+      this.hideTimer = setTimeout(() => {
+        this.hideTimer = -1;
+        this.setCollapseHidden(true);
+      }, Math.max(0, hold * 1000 - HIDE_LEAD_MILLIS));
+    }
+    return hold;
+  }
+
+  private setLastInput(value: number): void {
+    const before = this.cyl_drawnFraction;
+    this.lastInput = value;
+    const after = this.cyl_drawnFraction;
+    if (before !== after && this.drawnListener !== null) {
+      this.drawnListener(after);
+    }
+  }
+
   // MARK: - Driver
 
   /** The view's player is ready; a refresh that started before plays from its release. */
@@ -209,7 +395,9 @@ export class CYLRefreshRiveHeaderModel extends CYLRefreshDrawnHeaderModel {
       return;
     }
     if (style.pullInput !== null) {
-      driver.setNumber(style.pullInput, style.pullValue(offset));
+      const value = style.pullValue(offset);
+      this.setLastInput(value);
+      driver.setNumber(style.pullInput, value);
     }
     if (style.pullAnimation !== null && style.idleAnimation === null) {
       driver.scrub(style.pullAnimation, style.pullAnimationTime(offset));
@@ -224,7 +412,11 @@ export class CYLRefreshRiveHeaderModel extends CYLRefreshDrawnHeaderModel {
       return;
     }
     switch (status) {
+      case CYLRefreshPhase.PullToRefresh:
+        this.setCollapseHidden(false);
+        break;
       case CYLRefreshPhase.Releasing:
+        this.setCollapseHidden(false);
         if (this.rivePlaysRefresh) {
           break;
         }
@@ -235,6 +427,10 @@ export class CYLRefreshRiveHeaderModel extends CYLRefreshDrawnHeaderModel {
         this.playFinish();
         break;
       case CYLRefreshPhase.Idle:
+        if (oldStatus === CYLRefreshPhase.Finishing) {
+          this.cancelHide();
+          this.setCollapseHidden(true);
+        }
         if (!this.rivePlaysRefresh) {
           break;
         }
@@ -259,6 +455,7 @@ export class CYLRefreshRiveHeaderModel extends CYLRefreshDrawnHeaderModel {
       return;
     }
     if (style.pullInput !== null) {
+      this.setLastInput(style.refreshingPullValue);
       driver.setNumber(style.pullInput, style.refreshingPullValue);
     }
     if (style.releaseTrigger !== null) {
@@ -316,6 +513,7 @@ export class CYLRefreshRiveHeaderModel extends CYLRefreshDrawnHeaderModel {
       driver.setBoolean(style.loadingBoolean, false);
     }
     if (style.pullInput !== null) {
+      this.setLastInput(0);
       driver.setNumber(style.pullInput, 0);
     }
     if (style.loadingNumber !== null) {

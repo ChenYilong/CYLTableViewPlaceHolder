@@ -10,13 +10,13 @@
 //      with its `isAutomaticallyRefresh` getter, `triggerAutomaticallyRefreshPercent`, `autoTriggerTimes`,
 //      `loadsWhenContentNotFull`) and the same behavior: the automatic load when the footer scrolls into view, the trigger
 //      count per drag, the bottom inset kept while shown, and the paging alignment after a load (issue MJRefresh#1610). The
-//      private `-cyl_beginRefreshingWithoutValidation`, which `CYLRefreshAutoStateFooter` reached by selector, is the
-//      internal `cyl_beginRefreshingWithoutValidation()`. The class factories (`+footerWithRefreshingBlock:`,
+//      private `-beginRefreshingWithoutValidation`, which `CYLRefreshAutoStateFooter` reached by selector, is the
+//      internal `beginRefreshingWithoutValidation()`. The class factories (`+footerWithRefreshingBlock:`,
 //      `+footerWithRefreshingTarget:refreshingAction:`) are inherited and still return the class they are sent to.
 // [CN] 自 2026-11-20 起用 Swift 编写（docs/Swift-Migration.md 第 11 步），Objective-C API（getter 为 `isAutomaticallyRefresh` 的
 //      `automaticallyRefresh`、`triggerAutomaticallyRefreshPercent`、`autoTriggerTimes`、`loadsWhenContentNotFull`）与行为均不变：滚动到可见时
-//      自动加载、每次拖动的触发次数、显示时保留底部 inset、加载后分页对齐（issue MJRefresh#1610）。私有的 `-cyl_beginRefreshingWithoutValidation`
-//      （`CYLRefreshAutoStateFooter` 曾按选择器调用）现为 internal 的 `cyl_beginRefreshingWithoutValidation()`。类工厂方法
+//      自动加载、每次拖动的触发次数、显示时保留底部 inset、加载后分页对齐（issue MJRefresh#1610）。私有的 `-beginRefreshingWithoutValidation`
+//      （`CYLRefreshAutoStateFooter` 曾按选择器调用）现为 internal 的 `beginRefreshingWithoutValidation()`。类工厂方法
 //      （`+footerWithRefreshingBlock:`、`+footerWithRefreshingTarget:refreshingAction:`）继承而来，仍返回接收消息的类。
 
 import UIKit
@@ -85,18 +85,18 @@ open class CYLRefreshAutoFooter: CYLRefreshFooter {
      */
     open override func willMove(toSuperview newSuperview: UIView?) {
         if let oldScrollView = scrollView, !isHidden {
-            oldScrollView.cyl_insetB -= cyl_h
+            oldScrollView.cylInsetB -= cylH
         }
         super.willMove(toSuperview: newSuperview)
 
         // 新的父控件
         if let scrollView = scrollView {
             if !isHidden {
-                scrollView.cyl_insetB += cyl_h
+                scrollView.cylInsetB += cylH
             }
 
             // 设置位置
-            cyl_y = scrollView.cyl_contentH + ignoredScrollViewContentInsetBottom
+            cylY = scrollView.cylContentH + ignoredScrollViewContentInsetBottom
         }
     }
 
@@ -124,11 +124,11 @@ open class CYLRefreshAutoFooter: CYLRefreshFooter {
         super.scrollViewContentSizeDidChange(change)
 
         let size = (change?[NSKeyValueChangeKey.newKey.rawValue] as? NSValue)?.cgSizeValue ?? .zero
-        let contentHeight = size.height == 0 ? (scrollView?.cyl_contentH ?? 0) : size.height
+        let contentHeight = size.height == 0 ? (scrollView?.cylContentH ?? 0) : size.height
         // 设置位置
         let y = contentHeight + ignoredScrollViewContentInsetBottom
-        if cyl_y != y {
-            cyl_y = y
+        if cylY != y {
+            cylY = y
         }
     }
 
@@ -139,21 +139,21 @@ open class CYLRefreshAutoFooter: CYLRefreshFooter {
     open override func scrollViewContentOffsetDidChange(_ change: [AnyHashable: Any]?) {
         super.scrollViewContentOffsetDidChange(change)
 
-        if state != .idle || !isAutomaticallyRefresh || !isRefreshEnabled || cyl_y == 0 ||
-            scrollView?.cyl_header?.isRefreshing == true { return }
+        if state != .idle || !isAutomaticallyRefresh || !isRefreshEnabled || cylY == 0 ||
+            scrollView?.cylHeader?.isRefreshing == true { return }
         guard let scrollView = scrollView else { return }
 
         // 内容超过一个屏幕
-        if scrollView.cyl_insetT + scrollView.cyl_contentH > scrollView.cyl_h {
-            // 这里的_scrollView.cyl_contentH替换掉self.cyl_y更为合理
+        if scrollView.cylInsetT + scrollView.cylContentH > scrollView.cylH {
+            // 这里的_scrollView.cylContentH替换掉self.cylY更为合理
             if canTrigger() &&
-                scrollView.cyl_offsetY >= scrollView.cyl_contentH - scrollView.cyl_h + cyl_h * triggerAutomaticallyRefreshPercent +
-                scrollView.cyl_insetB - cyl_h {
+                scrollView.cylOffsetY >= scrollView.cylContentH - scrollView.cylH + cylH * triggerAutomaticallyRefreshPercent +
+                scrollView.cylInsetB - cylH {
                 // 防止手松开时连续调用
                 let old = (change?["old"] as? NSValue)?.cgPointValue ?? .zero
                 let new = (change?["new"] as? NSValue)?.cgPointValue ?? .zero
                 if new.y <= old.y { return }
-                if new.y <= -scrollView.cyl_insetT { return }
+                if new.y <= -scrollView.cylInsetT { return }
 
                 if scrollView.isDragging {
                     triggerByDrag = true
@@ -176,23 +176,23 @@ open class CYLRefreshAutoFooter: CYLRefreshFooter {
         if state == .noMoreData && loadsAfterNoMoreData && panState == .ended {
             resetNoMoreData()
         }
-        if state != .idle || !isRefreshEnabled || scrollView?.cyl_header?.isRefreshing == true || !canTrigger() { return }
+        if state != .idle || !isRefreshEnabled || scrollView?.cylHeader?.isRefreshing == true || !canTrigger() { return }
         guard let scrollView = scrollView else { return }
 
         switch scrollView.panGestureRecognizer.state {
         // 手松开
         case .ended:
             // 不够一个屏幕
-            if scrollView.cyl_insetT + scrollView.cyl_contentH <= scrollView.cyl_h {
+            if scrollView.cylInsetT + scrollView.cylContentH <= scrollView.cylH {
                 // 向上拽
-                if loadsWhenContentNotFull && scrollView.cyl_offsetY >= -scrollView.cyl_insetT {
+                if loadsWhenContentNotFull && scrollView.cylOffsetY >= -scrollView.cylInsetT {
                     triggerByDrag = true
                     beginRefreshing()
                 }
             } else {
                 // 超出一个屏幕
-                let threshold = scrollView.cyl_contentH + scrollView.cyl_insetB - scrollView.cyl_h
-                let offset = scrollView.cyl_offsetY
+                let threshold = scrollView.cylContentH + scrollView.cylInsetB - scrollView.cylH
+                let offset = scrollView.cylOffsetY
                 let epsilon = CGFloat.ulpOfOne
                 // Allow arithmetic rounding error without treating a visible gap as the bottom.
                 let tolerance = 64 * epsilon * max(1, max(abs(offset), abs(threshold)))
@@ -212,7 +212,7 @@ open class CYLRefreshAutoFooter: CYLRefreshFooter {
 
     // [EN] The driven mode (`CYLRefreshDrivenLayout`): a new drag resets the trigger count, as a pan `.began` does.
     // [CN] 驱动模式（`CYLRefreshDrivenLayout`）：新的拖动重置触发次数，与手势 `.began` 相同。
-    func cyl_drivenDragBegan() {
+    func drivenDragBegan() {
         resetTriggerTimes()
     }
 
@@ -220,8 +220,8 @@ open class CYLRefreshAutoFooter: CYLRefreshFooter {
     //      view, so it loads as a release at the end does (the driven scroll view has no content of its own, so the
     //      content-not-full test does not apply).
     // [CN] 驱动模式：宿主内容末端被上拉后手指抬起，即刷新尾已可见，按末端松手加载（驱动的滚动视图自身没有内容，故不适用内容不满一屏的判断）。
-    func cyl_drivenReleased() {
-        if state != .idle || !isRefreshEnabled || scrollView?.cyl_header?.isRefreshing == true || !canTrigger() { return }
+    func drivenReleased() {
+        if state != .idle || !isRefreshEnabled || scrollView?.cylHeader?.isRefreshing == true || !canTrigger() { return }
         triggerByDrag = true
         beginRefreshing()
     }
@@ -245,7 +245,7 @@ open class CYLRefreshAutoFooter: CYLRefreshFooter {
     // [EN] Begins refreshing through CYLRefreshFooter's `-beginRefreshing`, past this class's trigger-count check: the tap
     //      on `CYLRefreshAutoStateFooter`'s idle text.
     // [CN] 经由 CYLRefreshFooter 的 `-beginRefreshing` 开始刷新，跳过本类的触发次数检查：供 `CYLRefreshAutoStateFooter` 点击闲置文字时调用。
-    func cyl_beginRefreshingWithoutValidation() {
+    func beginRefreshingWithoutValidation() {
         super.beginRefreshing()
     }
 
@@ -293,8 +293,8 @@ open class CYLRefreshAutoFooter: CYLRefreshFooter {
     private func alignPageAfterLoading() {
         guard let scrollView = scrollView, !scrollView.isDragging, !scrollView.isDecelerating else { return }
         var offset = scrollView.contentOffset
-        let bottomInset = scrollView.cyl_insetB - (isHidden ? 0 : cyl_h)
-        let maximumOffset = max(-scrollView.cyl_insetT, scrollView.cyl_contentH + bottomInset - scrollView.cyl_h)
+        let bottomInset = scrollView.cylInsetB - (isHidden ? 0 : cylH)
+        let maximumOffset = max(-scrollView.cylInsetT, scrollView.cylContentH + bottomInset - scrollView.cylH)
         // FIX: issue MJRefresh#1610 (page alignment)
         // [EN] The load started with the footer's space showing past the last page, so the offset
         //      sits between two page boundaries; once new pages arrived it is no longer out of range,
@@ -304,7 +304,7 @@ open class CYLRefreshAutoFooter: CYLRefreshFooter {
         // [CN] 加载开始时最后一页之后露出了刷新尾的空间，offset 位于两个分页边界之间；有新页加入后它不再越界，
         //      分页会让该页错开刷新尾的高度。停到分页本身能停下的最近位置：范围内的分页边界，或内容末端（调用方自己的
         //      底部 inset 可能使其位于两个边界之间）。
-        let top = scrollView.cyl_insetT
+        let top = scrollView.cylInsetT
         var target = maximumOffset
         let pageHeight = scrollView.bounds.height
         if pageHeight > 0 {
@@ -337,12 +337,12 @@ open class CYLRefreshAutoFooter: CYLRefreshFooter {
             if !lastHidden && newValue {
                 state = .idle
 
-                scrollView?.cyl_insetB -= cyl_h
+                scrollView?.cylInsetB -= cylH
             } else if lastHidden && !newValue {
-                scrollView?.cyl_insetB += cyl_h
+                scrollView?.cylInsetB += cylH
 
                 // 设置位置
-                cyl_y = (scrollView?.cyl_contentH ?? 0) + ignoredScrollViewContentInsetBottom
+                cylY = (scrollView?.cylContentH ?? 0) + ignoredScrollViewContentInsetBottom
             }
         }
     }

@@ -82,6 +82,7 @@ playground.xcworkspace
 # Carthage
 Carthage/Build
 Carthage/Checkouts
+android/.classifymenu/
 
 # fastlane
 fastlane/report.xml
@@ -102,3 +103,4 @@ CrossPlatform/RiveViewer-miniapp/
 
 # Claude Code agent worktrees (machine-local)
 .claude/worktrees/
+.claude/*.log

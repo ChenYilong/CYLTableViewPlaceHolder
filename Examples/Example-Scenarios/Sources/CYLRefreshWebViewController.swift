@@ -22,16 +22,16 @@ final class CYLRefreshWKWebViewController: UIViewController, CYLRefreshExampleRu
         let webView = self.webView
         CYLRefreshExampleImagesHeader { [weak webView] in
             webView?.reload()
-        }.cyl_link(to: webView!.scrollView).cyl_autoChangeTransparency(true)
+        }.link(to: webView!.scrollView).autoChangeTransparency(true)
         // A footer would work the same way
-        webView?.scrollView.cyl_header?.beginRefreshing()
+        webView?.scrollView.cylHeader?.beginRefreshing()
     }
 
     func example41() {
         CYLRefreshExampleImagesHeader { [weak self] in
             self?.webView.reload()
-        }.cyl_autoChangeTransparency(true).cyl_link(to: webView.scrollView)
-        webView.scrollView.cyl_header?.beginRefreshing()
+        }.autoChangeTransparency(true).link(to: webView.scrollView)
+        webView.scrollView.cylHeader?.beginRefreshing()
     }
 
     override func viewDidLoad() {
@@ -98,15 +98,15 @@ final class CYLRefreshWKWebViewController: UIViewController, CYLRefreshExampleRu
 
 extension CYLRefreshWKWebViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        webView.scrollView.cyl_header?.endRefreshing()
+        webView.scrollView.cylHeader?.endRefreshing()
     }
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        webView.scrollView.cyl_header?.endRefreshing()
+        webView.scrollView.cylHeader?.endRefreshing()
     }
 
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-        webView.scrollView.cyl_header?.endRefreshing()
+        webView.scrollView.cylHeader?.endRefreshing()
     }
 }
 
@@ -134,14 +134,14 @@ final class CYLRefreshI18NExampleViewController: UITableViewController, CYLRefre
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
         CYLRefreshNormalHeader { [weak self] in
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                self?.tableView.cyl_header?.endRefreshing()
+                self?.tableView.cylHeader?.endRefreshing()
             }
-        }.cyl_autoChangeTransparency(true).cyl_link(to: tableView)
+        }.autoChangeTransparency(true).link(to: tableView)
         CYLRefreshAutoNormalFooter { [weak self] in
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                self?.tableView.cyl_footer?.endRefreshing()
+                self?.tableView.cylFooter?.endRefreshing()
             }
-        }.cyl_link(to: tableView)
+        }.link(to: tableView)
     }
 
     override func viewWillDisappear(_ animated: Bool) {

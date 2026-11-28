@@ -7,8 +7,10 @@ on:
   push:
     tags: [ '[0-9]+.[0-9]+.[0-9]+' ]
 
+# Least privilege (OpenSSF Scorecard Token-Permissions, MJRefresh #1624): read at the top, write only in the job
+# that creates the release and uploads the XCFramework.
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: release
@@ -19,6 +21,8 @@ jobs:
     name: Publish ${{ github.ref_name }}
     runs-on: ${{ vars.MACOS_RUNNER || 'macos-26' }}
     timeout-minutes: 60
+    permissions:
+      contents: write
     env:
       TAG: ${{ github.ref_name }}
     steps:

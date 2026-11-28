@@ -51,6 +51,28 @@ interface CYLTableViewPlaceHolderDelegate {
 }
 
 /**
+ * A container around a list (a refresh layout) that loads more at the end of it. An empty list has nothing more to
+ * load, so the container stops loading more while the list's placeholder shows and restores it when the placeholder
+ * goes, as iOS hides footers and trailers over an empty list. Pull to refresh stays. The placeholder finds the nearest
+ * one among the list's ancestors.
+ */
+interface CYLPlaceholderLoadMoreHost {
+    /**
+     * The placeholder of [list] (a RecyclerView) now shows ([showing] true) or is gone (false).
+     */
+    fun cyl_placeholderDidChange(list: View, showing: Boolean)
+}
+
+private fun RecyclerView.loadMoreHost(): CYLPlaceholderLoadMoreHost? {
+    var ancestor = parent
+    while (ancestor != null) {
+        if (ancestor is CYLPlaceholderLoadMoreHost) return ancestor
+        ancestor = ancestor.parent
+    }
+    return null
+}
+
+/**
  * What a list keeps for its placeholder.
  */
 private class PlaceholderState(val list: RecyclerView) : RecyclerView.AdapterDataObserver() {
@@ -116,6 +138,7 @@ private class PlaceholderState(val list: RecyclerView) : RecyclerView.AdapterDat
         list.visibility = View.GONE
         parent.addView(content, parent.indexOfChild(list) + 1, copy)
         host = content
+        list.loadMoreHost()?.cyl_placeholderDidChange(list, true)
     }
 
     /**
@@ -132,9 +155,11 @@ private class PlaceholderState(val list: RecyclerView) : RecyclerView.AdapterDat
     }
 
     fun remove() {
-        host?.let { (it.parent as? ViewGroup)?.removeView(it) }
+        val shown = host ?: return
+        (shown.parent as? ViewGroup)?.removeView(shown)
         host = null
         list.visibility = listVisibility
+        list.loadMoreHost()?.cyl_placeholderDidChange(list, false)
     }
 }
 

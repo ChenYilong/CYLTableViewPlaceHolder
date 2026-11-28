@@ -26,7 +26,7 @@ import {
   CYLPlaceholderPlayableContentView,
   CYLPlaceholderRegisterAnimatedItemType
 } from '../main/ets/CYLPlaceholderAnimation';
-import { CYLAnimatedItemEngines, cylAnimatedItemTypeOf } from 'cylanimateditem';
+import { CYLAnimatedItemEngines, CYLAnimatedItemPlayer, cylAnimatedItemTypeOf } from 'cylanimateditem';
 import { CYLAnimatedItemEnginePlaceholderAnimator, CYLAnimatedItemEngineContentView } from '../main/ets/CYLAnimatedItemEnginePlaceholderAnimator';
 import { CYLAnimatedItemGIF } from 'cylanimateditem';
 import { CYLPlaceholderViewModel, CYLScenarioIsLineIcon, CYLScenarioLineIconColor } from '../main/ets/CYLPlaceholderView';
@@ -142,6 +142,15 @@ function keys(generic: string, library: string): Record<string, string> {
   const r: Record<string, string> = {};
   r[generic] = library;
   return r;
+}
+
+/** A player that counts its plays (the remount test). */
+class CountingPlayer extends CYLAnimatedItemPlayer {
+  plays: number = 0;
+
+  play(): void {
+    this.plays += 1;
+  }
 }
 
 export default function placeholderAnimationTest() {
@@ -334,6 +343,31 @@ export default function placeholderAnimationTest() {
       content.cyl_playAnimationView();
       expect(content.pendingCommand).assertEqual(1);
       expect(gif.playerForAnimationView(content) !== null).assertTrue();
+    });
+
+    it('aRemountedEngineViewPlaysTheCommandItWaitedFor', 0, () => {
+      // A refresh footer removes its icon between loads: the engine view goes away (no player) and comes back. The
+      // content view stays ready, so `didLoad` does not run again; a play asked in between must run on the new player,
+      // else the footer's GIF stayed on its first frame (Feed footer, 2026-11-25).
+      CYLAnimatedItemGIF.register();
+      const content = new CYLAnimatedItemEnginePlaceholderAnimator('GIF')
+        .animationViewWithURL('Animations/a.gif', 28, 28, ImageFit.Contain) as CYLAnimatedItemEngineContentView;
+      const source = content.engineState.source;
+      const first = new CountingPlayer('GIF', source);
+      content.engineState.onPlayer(first);
+      content.engineState.onLoaded();
+      content.cyl_playAnimationView();
+      expect(first.plays).assertEqual(1);
+      // The view goes away; a play asked now waits.
+      content.engineState.onPlayer(undefined);
+      content.cyl_playAnimationView();
+      expect(content.pendingCommand).assertEqual(1);
+      // It comes back: the new player plays at once, and nothing is left waiting.
+      const second = new CountingPlayer('GIF', source);
+      content.engineState.onPlayer(second);
+      content.engineState.onLoaded();
+      expect(second.plays).assertEqual(1);
+      expect(content.pendingCommand).assertEqual(0);
     });
 
     it('fileURLKeepsItsFragmentOptions', 0, () => {

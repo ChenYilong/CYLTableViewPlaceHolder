@@ -41,7 +41,7 @@ enum CYLRefreshFrames {
     }
 }
 
-final class CYLRefreshIconListViewController: UITableViewController {
+final class CYLRefreshIconListViewController: CYLTagListScreenViewController {
 
     private struct Row {
         let title: String
@@ -75,7 +75,7 @@ final class CYLRefreshIconListViewController: UITableViewController {
         }
     }
 
-    private let sections: [Section] = {
+    private let groups: [Section] = {
         let names = CYLRefreshAnimationHeader.bundledIconAnimationFileNames
         // MJRefresh's default style, unchanged: the arrow turns while pulling and a spinner replaces it while
         // refreshing. These controls have no icon API; the icons below belong to the animated-image controls only.
@@ -196,7 +196,7 @@ final class CYLRefreshIconListViewController: UITableViewController {
     }()
 
     init() {
-        super.init(style: .insetGrouped)
+        super.init(nibName: nil, bundle: nil)
         title = CYLScenarioLocalizedString(.refreshIcons)
         hidesBottomBarWhenPushed = true
     }
@@ -207,44 +207,18 @@ final class CYLRefreshIconListViewController: UITableViewController {
     }
 
     override func viewDidLoad() {
-        super.viewDidLoad()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "refreshIcon")
-        tableView.accessibilityIdentifier = "refreshIconList"
+        sections = groups.map { group in
+            CYLTagSection(title: group.title, entries: group.rows.map { row in
+                CYLTagEntry(title: row.title, subtitle: row.subtitle) { [weak self] in
+                    self?.navigationController?.pushViewController(
+                        CYLRefreshIconDemoViewController(title: row.title, setup: row.setup), animated: true)
+                }
+            })
+        }
         // The empty state of this list, should the bundle be missing.
-        tableView.cyl_placeholderViewBlock({ _ in
-            CYLPlaceholderView(style: .folderOff, text: CYLScenarioLocalizedString(.textNoAnimations))
-        })
-    }
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        sections.count
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        sections[section].rows.count
-    }
-
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        sections[section].title
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "refreshIcon", for: indexPath)
-        let row = sections[indexPath.section].rows[indexPath.row]
-        var content = UIListContentConfiguration.subtitleCell()
-        content.text = row.title
-        content.secondaryText = row.subtitle
-        content.secondaryTextProperties.color = .secondaryLabel
-        cell.contentConfiguration = content
-        cell.accessoryType = .disclosureIndicator
-        return cell
-    }
-
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        let row = sections[indexPath.section].rows[indexPath.row]
-        navigationController?.pushViewController(CYLRefreshIconDemoViewController(title: row.title, setup: row.setup),
-                                                 animated: true)
+        emptyView = CYLPlaceholderView(style: .folderOff, text: CYLScenarioLocalizedString(.textNoAnimations))
+        super.viewDidLoad()
+        tagList.accessibilityIdentifier = "refreshIconList"
     }
 }
 
@@ -323,24 +297,24 @@ final class CYLRefreshIconDemoViewController: UITableViewController {
                 guard let self = self else { return }
                 self.rows = 15
                 self.tableView.reloadData()
-                self.tableView.cyl_header?.endRefreshing()
-                self.tableView.cyl_footer?.resetNoMoreData()
+                self.tableView.cylHeader?.endRefreshing()
+                self.tableView.cylFooter?.resetNoMoreData()
             }
         }
         footer.refreshingBlock = { [weak self] in
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 guard let self = self else { return }
                 if self.rows >= 45 {
-                    self.tableView.cyl_footer?.endRefreshingWithNoMoreData()
+                    self.tableView.cylFooter?.endRefreshingWithNoMoreData()
                     return
                 }
                 self.rows += 15
                 self.tableView.reloadData()
-                self.tableView.cyl_footer?.endRefreshing()
+                self.tableView.cylFooter?.endRefreshing()
             }
         }
-        tableView.cyl_header = header
-        tableView.cyl_footer = footer
+        tableView.cylHeader = header
+        tableView.cylFooter = footer
         // The playback controls of docs/Example-Animation-Playback.md above the rows.
         controls.installAsRefreshIconControls(in: tableView)
     }
@@ -351,7 +325,7 @@ final class CYLRefreshIconDemoViewController: UITableViewController {
     }
 
     @objc private func beginRefreshing() {
-        tableView.cyl_header?.beginRefreshing()
+        tableView.cylHeader?.beginRefreshing()
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

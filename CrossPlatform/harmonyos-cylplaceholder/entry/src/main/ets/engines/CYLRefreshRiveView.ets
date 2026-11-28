@@ -120,6 +120,10 @@ export struct CYLRefreshRiveView {
   scrollView: CYLRefreshScrollViewModel = new CYLRefreshScrollViewModel();
   role: string = 'header';
   @State private viewH: number = 0;
+  // The drawn-height table's fraction (0...1) of the header, from the top, that shows the art; -1 for no clip.
+  @State private drawnFraction: number = -1;
+  // True from 500 ms before the finish hold ends until the next pull: the Rive view does not draw.
+  @State private collapseHidden: boolean = false;
   private header: CYLRefreshRiveHeaderModel | null = null;
   private riveView: RiveAnimationView | null = null;
   private bytes: ArrayBuffer | null = null;
@@ -138,6 +142,15 @@ export struct CYLRefreshRiveView {
       return;
     }
     const style = header.riveStyle as CYLRefreshRiveStyle;
+    const initial = header.cyl_drawnFraction;
+    this.drawnFraction = initial !== null ? initial : -1;
+    header.cyl_setDrawnListener((fraction: number | null) => {
+      this.drawnFraction = fraction !== null ? fraction : -1;
+    });
+    this.collapseHidden = header.cyl_collapseHidden;
+    header.cyl_setHiddenListener((hidden: boolean) => {
+      this.collapseHidden = hidden;
+    });
     CYLPlaceholderAnimationReadFile(style.fileURL, this.getUIContext().getHostContext() as Context)
       .then((bytes: Uint8Array) => {
         this.bytes = CYLPlaceholderAnimationArrayBuffer(bytes);
@@ -149,6 +162,10 @@ export struct CYLRefreshRiveView {
   }
 
   aboutToDisappear(): void {
+    if (this.header !== null) {
+      this.header.cyl_setDrawnListener(null);
+      this.header.cyl_setHiddenListener(null);
+    }
     if (this.header !== null && this.driver !== null) {
       this.header.cyl_detachDriver(this.driver);
     }
@@ -185,20 +202,34 @@ export struct CYLRefreshRiveView {
       (header.riveStyle as CYLRefreshRiveStyle).layoutHeight(this.viewH) : this.viewH;
   }
 
+  /** The height of the clipped window the art shows in: the table's fraction of the header, or all of it. */
+  private clipHeight(): number {
+    return this.drawnFraction < 0 ? this.layoutHeight() : Math.min(this.layoutHeight(), this.viewH) * this.drawnFraction;
+  }
+
   build() {
+    // The art keeps its size; a top-aligned window of `clipHeight` (clip(true)) shows its top part and cuts the black
+    // at the bottom. The window sits at the bottom of the header (flush with the first row, as iOS and Android).
     Stack({ alignContent: Alignment.Bottom }) {
-      RiveAnimationView({
-        riveAutoPlay: false,
-        touchPassThrough: true,
-        rendererType: cylRiveRendererType(),
-        onReady: (riveView: RiveAnimationView) => {
-          this.riveView = riveView;
-          this.loadIfPossible();
-        }
-      })
-        .width('100%')
-        .height(this.layoutHeight())
-        .hitTestBehavior(HitTestMode.None)
+      Stack({ alignContent: Alignment.Top }) {
+        RiveAnimationView({
+          riveAutoPlay: false,
+          touchPassThrough: true,
+          rendererType: cylRiveRendererType(),
+          onReady: (riveView: RiveAnimationView) => {
+            this.riveView = riveView;
+            this.loadIfPossible();
+          }
+        })
+          .width('100%')
+          .height(this.layoutHeight())
+          .hitTestBehavior(HitTestMode.None)
+      }
+      .width('100%')
+      .height(this.drawnFraction < 0 ? this.layoutHeight() : this.clipHeight())
+      .clip(true)
+      .opacity(this.collapseHidden ? 0 : 1)
+      .visibility(this.collapseHidden ? Visibility.Hidden : Visibility.Visible)
     }
     .width('100%')
     .height('100%')

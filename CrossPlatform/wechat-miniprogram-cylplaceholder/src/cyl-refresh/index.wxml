@@ -55,7 +55,7 @@
     <view class="cyl-refresh__content" style="{{mode === 'front' && pull > 0 ? 'transform: translateY(-' + pull + 'px);' : ''}}">
       <slot></slot>
     </view>
-    <view wx:if="{{footer !== 'none' && !footerHidden}}" class="cyl-refresh__footer" style="height: {{footerSize}}px"
+    <view wx:if="{{footer !== 'none' && !footerHidden && !placeholderShown}}" class="cyl-refresh__footer" style="height: {{footerSize}}px"
           bindtap="onFooterTap" aria-role="{{footer !== 'back' && footer !== 'diyBack' && footerState === 'Idle' ? 'button' : 'text'}}" aria-label="{{texts.footerA11y}}">
       <slot wx:if="{{footer === 'diy' || footer === 'diyBack'}}" name="footer"></slot>
       <block wx:else>

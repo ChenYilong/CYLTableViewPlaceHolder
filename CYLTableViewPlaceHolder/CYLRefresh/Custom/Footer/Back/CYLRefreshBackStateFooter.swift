@@ -39,8 +39,8 @@ open class CYLRefreshBackStateFooter: CYLRefreshBackFooter {
      */
     @objc open var stateLabel: UILabel! {
         if let label = storedStateLabel { return label }
-        // [EN] `+[UILabel cyl_label]`, which Swift imports as `cyl_()`. [CN] 即 `+[UILabel cyl_label]`，Swift 导入为 `cyl_()`。
-        let label = UILabel.cyl_()
+        // [EN] `+[UILabel cyl_label]`, which Swift calls `cylLabel()`. [CN] 即 `+[UILabel cyl_label]`，Swift 中为 `cylLabel()`。
+        let label = UILabel.cylLabel()
         addSubview(label)
         storedStateLabel = label
         return label
@@ -54,8 +54,8 @@ open class CYLRefreshBackStateFooter: CYLRefreshBackFooter {
     @discardableResult
     open func setTitle(_ title: String?, for state: CYLRefreshState) -> Self {
         guard let title = title else { return self }
-        cyl_setStateTitle(title, for: state)
-        stateLabel.text = cyl_stateTitle(for: self.state)
+        setStateTitle(title, for: state)
+        stateLabel.text = stateTitle(for: self.state)
         return self
     }
 
@@ -65,15 +65,15 @@ open class CYLRefreshBackStateFooter: CYLRefreshBackFooter {
      */
     @objc(titleForState:)
     open func title(for state: CYLRefreshState) -> String? {
-        cyl_stateTitle(for: state)
+        stateTitle(for: state)
     }
 
     private func textConfiguration() {
         // 初始化文字
-        setTitle(Bundle.cyl_localizedString(forKey: CYLRefreshBackFooterIdleText), for: .idle)
-        setTitle(Bundle.cyl_localizedString(forKey: CYLRefreshBackFooterPullingText), for: .pulling)
-        setTitle(Bundle.cyl_localizedString(forKey: CYLRefreshBackFooterRefreshingText), for: .refreshing)
-        setTitle(Bundle.cyl_localizedString(forKey: CYLRefreshBackFooterNoMoreDataText), for: .noMoreData)
+        setTitle(Bundle.cylLocalizedString(forKey: CYLRefreshBackFooterIdleText), for: .idle)
+        setTitle(Bundle.cylLocalizedString(forKey: CYLRefreshBackFooterPullingText), for: .pulling)
+        setTitle(Bundle.cylLocalizedString(forKey: CYLRefreshBackFooterRefreshingText), for: .refreshing)
+        setTitle(Bundle.cylLocalizedString(forKey: CYLRefreshBackFooterNoMoreDataText), for: .noMoreData)
     }
 
     // MARK: - Overrides
@@ -122,7 +122,7 @@ open class CYLRefreshBackStateFooter: CYLRefreshBackFooter {
             super.state = newValue
 
             // 设置状态文字
-            stateLabel.text = cyl_stateTitle(for: newValue)
+            stateLabel.text = stateTitle(for: newValue)
         }
     }
 
@@ -140,6 +140,6 @@ open class CYLRefreshBackStateFooter: CYLRefreshBackFooter {
     open override func refreshDidFinish(withSuccess success: Bool) {
         super.refreshDidFinish(withSuccess: success)
         if finishingDuration(withSuccess: success) <= 0 { return }
-        stateLabel.text = Bundle.cyl_localizedString(forKey: success ? CYLRefreshFooterFinishedText : CYLRefreshFooterFailedText)
+        stateLabel.text = Bundle.cylLocalizedString(forKey: success ? CYLRefreshFooterFinishedText : CYLRefreshFooterFailedText)
     }
 }

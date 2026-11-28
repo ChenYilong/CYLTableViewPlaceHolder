@@ -10,7 +10,9 @@ rule: instruction files by tag, at most 200 lines each). Summaries: [instruction
 - Prefix new project-owned Objective-C class names and corresponding class
   filenames with `CYL`, following `CYLRefreshComponent`.
 - Name UIKit category files `<SystemClass>+CYL<Feature>.h` and `.m`, and prefix
-  new category selectors and properties with `cyl_`. Objective-C property
+  new category selectors and properties with `cyl_`. In Swift the selector stays `cyl_name` through
+  `@objc(cyl_name)` while the Swift name is `cylName`; members of the library's own Swift types have no prefix
+  (see [macos.md](macos.md), "Making the Objective-C core Swift-friendly", rule 3, and `docs/Swift-Naming.md`). Objective-C property
   setters use `setCyl_`. Do not rename required system overrides such as `load`.
 - Use `CYL` for project-defined type and constant prefixes. Do not copy
   unrelated vendor prefixes into new project APIs.

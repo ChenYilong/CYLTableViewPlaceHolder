@@ -115,10 +115,10 @@ final class CYLPlaybackControlsView: UIView {
     /// Call `sizeTableHeader(of:)` from `viewDidLayoutSubviews`.
     func installAsRefreshIconControls(in tableView: UITableView) {
         let icons: (UITableView?) -> [CYLRefreshIconView] = { table in
-            [table?.cyl_header, table?.cyl_footer].compactMap { ($0 as? CYLRefreshIconAnimating)?.iconView }
+            [table?.cylHeader, table?.cylFooter].compactMap { ($0 as? CYLRefreshIconAnimating)?.iconView }
         }
         onPlayAll = { [weak tableView] in
-            if let header = tableView?.cyl_header, !header.isRefreshing { header.beginRefreshing() }
+            if let header = tableView?.cylHeader, !header.isRefreshing { header.beginRefreshing() }
             icons(tableView).forEach { $0.replayAnimation() }
         }
         onSpeed = { [weak tableView] speed in icons(tableView).forEach { $0.animationSpeed = speed } }

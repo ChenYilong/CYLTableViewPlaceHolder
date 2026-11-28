@@ -135,7 +135,8 @@ def make(spec_path):
     columns = 1
     cell_w, rows, width = layout(panels, columns)
     one_column_height = sum(p.height + MARGIN for p in panels) + MARGIN
-    if len(panels) >= 2 and one_column_height > PHONE_RATIO * width:
+    # "columns": 1 in the sheet.json keeps one column whatever the height (owner's request, 2026-11-25).
+    if len(panels) >= 2 and spec.get("columns") != 1 and one_column_height > PHONE_RATIO * width:
         columns = 2
         cell_w, rows, width = layout(panels, columns)
     size = max(20, width // 42)

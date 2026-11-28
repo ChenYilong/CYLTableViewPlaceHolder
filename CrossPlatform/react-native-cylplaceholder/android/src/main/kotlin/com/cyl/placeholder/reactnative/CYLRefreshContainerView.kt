@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.view.View
 import com.cyl.refresh.CYLRefreshAutoNormalFooter
+import com.cyl.refresh.CYLRefreshBackFooter
 import com.cyl.refresh.CYLRefreshFooter
 import com.cyl.refresh.CYLRefreshHeader
 import com.cyl.refresh.CYLRefreshNormalHeader
@@ -34,14 +35,16 @@ class CYLRefreshContainerView(context: Context) : CYLRefreshLayout(context) {
     var onLoadMore: (() -> Unit)? = null
 
     /**
-     * Called after the second floor opened from a pull (not when `secondaryOpen` was set from JS).
+     * Called after a second floor opened from a pull (not when `secondaryOpen` / `footerSecondaryOpen` was set from JS), with the
+     * edge it belongs to: [EDGE_HEADER] or [EDGE_FOOTER].
      */
-    var onSecondaryOpen: (() -> Unit)? = null
+    var onSecondaryOpen: ((String) -> Unit)? = null
 
     /**
-     * Called after the second floor closed from a push or a pull (not when `secondaryOpen` was set from JS).
+     * Called after a second floor closed from a push or a pull (not when `secondaryOpen` / `footerSecondaryOpen` was set from JS),
+     * with the edge as [onSecondaryOpen].
      */
-    var onSecondaryClose: (() -> Unit)? = null
+    var onSecondaryClose: ((String) -> Unit)? = null
 
     private var header: CYLRefreshHeader = CYLRefreshNormalHeader(context)
     private var footer: CYLRefreshFooter = CYLRefreshAutoNormalFooter(context)
@@ -56,6 +59,12 @@ class CYLRefreshContainerView(context: Context) : CYLRefreshLayout(context) {
     private var secondaryTrigger = 0f
     private var secondaryDimensionDp = 0f
     private var secondaryCloseTrigger = 80f
+    private var footerSecondaryTrigger = 0f
+    private var footerSecondaryDimensionDp = 0f
+    private var footerSecondaryCloseTrigger = 80f
+    private var footerOpenAskedByJs = false
+    private var footerCloseAskedByJs = false
+    private var footerFloorChild: View? = null
     // The floor JavaScript asked to open or close runs its blocks later; they must not call the events back.
     private var openAskedByJs = false
     private var closeAskedByJs = false
@@ -75,8 +84,8 @@ class CYLRefreshContainerView(context: Context) : CYLRefreshLayout(context) {
     private fun installHeader(new: CYLRefreshHeader) {
         header = new
         new.refreshingBlock = { if (askedByJs) askedByJs = false else onRefresh?.invoke() }
-        new.secondaryOpenedBlock = { if (openAskedByJs) openAskedByJs = false else onSecondaryOpen?.invoke() }
-        new.secondaryClosedBlock = { if (closeAskedByJs) closeAskedByJs = false else onSecondaryClose?.invoke() }
+        new.secondaryOpenedBlock = { if (openAskedByJs) openAskedByJs = false else onSecondaryOpen?.invoke(EDGE_HEADER) }
+        new.secondaryClosedBlock = { if (closeAskedByJs) closeAskedByJs = false else onSecondaryClose?.invoke(EDGE_HEADER) }
         new.secondaryTriggerOffset = secondaryTrigger
         new.secondaryDimension = secondaryDimensionDp
         new.secondaryCloseTriggerOffset = secondaryCloseTrigger
@@ -88,6 +97,15 @@ class CYLRefreshContainerView(context: Context) : CYLRefreshLayout(context) {
         footer = new
         new.refreshingBlock = { if (loadAskedByJs) loadAskedByJs = false else onLoadMore?.invoke() }
         new.loadsAfterNoMoreData = loadsAfterNoMoreDataOn
+        // Only the back footers have a second floor (iOS `CYLRefreshBackFooter`); the auto footer and the others ignore the props.
+        (new as? CYLRefreshBackFooter)?.let { back ->
+            back.secondaryOpenedBlock = { if (footerOpenAskedByJs) footerOpenAskedByJs = false else onSecondaryOpen?.invoke(EDGE_FOOTER) }
+            back.secondaryClosedBlock = { if (footerCloseAskedByJs) footerCloseAskedByJs = false else onSecondaryClose?.invoke(EDGE_FOOTER) }
+            back.secondaryTriggerOffset = footerSecondaryTrigger
+            back.secondaryDimension = footerSecondaryDimensionDp
+            back.secondaryCloseTriggerOffset = footerSecondaryCloseTrigger
+            back.secondaryView = footerFloorChild
+        }
         cyl_footer = new
         // Off until the `loadMoreEnabled` prop turns it on, so a container without a footer behaves as before.
         setEnableLoadMore(loadMoreOn)
@@ -129,6 +147,7 @@ class CYLRefreshContainerView(context: Context) : CYLRefreshLayout(context) {
         val footerState = footerStyle?.key to (if (footerStyle == CYLRefreshStyle.Rive) footerRive else null)
         if (footerState != appliedFooterStyle) {
             appliedFooterStyle = footerState
+            (footer as? CYLRefreshBackFooter)?.secondaryView = null
             installFooter(footerStyle?.newFooter(context, footerRive) ?: CYLRefreshAutoNormalFooter(context))
         }
     }
@@ -179,15 +198,58 @@ class CYLRefreshContainerView(context: Context) : CYLRefreshLayout(context) {
         }
     }
 
+    private val backFooter: CYLRefreshBackFooter? get() = footer as? CYLRefreshBackFooter
+
+    /**
+     * The `footerSecondaryTriggerOffset` prop, in dp: the pull up past which a release opens the footer's second floor; 0 (default) is none.
+     */
+    fun setFooterSecondaryTriggerOffset(offset: Float) {
+        footerSecondaryTrigger = offset
+        backFooter?.secondaryTriggerOffset = offset
+    }
+
+    /** The `footerSecondaryDimension` prop, in dp: the open extent of the footer's floor; 0 is the container's height. */
+    fun setFooterSecondaryDimension(dimension: Float) {
+        footerSecondaryDimensionDp = dimension
+        backFooter?.secondaryDimension = dimension
+    }
+
+    /** The `footerSecondaryCloseTriggerOffset` prop, in dp (default 80). */
+    fun setFooterSecondaryCloseTriggerOffset(offset: Float) {
+        footerSecondaryCloseTrigger = offset
+        backFooter?.secondaryCloseTriggerOffset = offset
+    }
+
+    /**
+     * The `footerSecondaryOpen` prop, controlled like `secondaryOpen`, for the footer's floor. Opening needs the floor's content child and a
+     * back footer, and is a no-op while the footer loads.
+     */
+    fun setFooterSecondaryOpenFromJs(open: Boolean) {
+        val back = backFooter ?: return
+        if (open == back.secondaryOpen) return
+        if (open) {
+            if (back.secondaryView == null || back.isRefreshing) return
+            footerOpenAskedByJs = true
+            back.openSecondary()
+        } else {
+            footerCloseAskedByJs = true
+            back.closeSecondary()
+        }
+    }
+
     /**
      * Adds a child at React Native's [index]: the floor's content only becomes the header's `secondaryView`, any other child is
      * added to the layout.
      */
     fun addReactChild(child: View, index: Int) {
         reactChildren.add(index.coerceIn(0, reactChildren.size), child)
-        if (child.getTag(com.facebook.react.R.id.view_tag_native_id) == SECONDARY_NATIVE_ID) {
+        val nativeId = child.getTag(com.facebook.react.R.id.view_tag_native_id)
+        if (nativeId == SECONDARY_NATIVE_ID) {
             floorChild = child
             header.secondaryView = child
+        } else if (nativeId == FOOTER_SECONDARY_NATIVE_ID) {
+            footerFloorChild = child
+            backFooter?.secondaryView = child
         } else {
             addView(child)
         }
@@ -211,6 +273,10 @@ class CYLRefreshContainerView(context: Context) : CYLRefreshLayout(context) {
         if (child === floorChild) {
             header.secondaryView = null
             floorChild = null
+            (child.parent as? android.view.ViewGroup)?.removeView(child)
+        } else if (child === footerFloorChild) {
+            backFooter?.secondaryView = null
+            footerFloorChild = null
             (child.parent as? android.view.ViewGroup)?.removeView(child)
         } else {
             removeView(child)
@@ -286,5 +352,16 @@ class CYLRefreshContainerView(context: Context) : CYLRefreshLayout(context) {
          * The `nativeID` of the child that is the second floor's content.
          */
         const val SECONDARY_NATIVE_ID = "cyl.refresh.secondary"
+
+        /**
+         * The `nativeID` of the child that is the footer's second floor content.
+         */
+        const val FOOTER_SECONDARY_NATIVE_ID = "cyl.refresh.secondary.footer"
+
+        /** The `edge` of an event from the header's second floor. */
+        const val EDGE_HEADER = "header"
+
+        /** The `edge` of an event from the footer's second floor. */
+        const val EDGE_FOOTER = "footer"
     }
 }

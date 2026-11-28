@@ -21,6 +21,25 @@ Several sessions share the Android emulator (`emulator-5556`) and the HarmonyOS 
 - **When done, tell the other sessions** ("done, emulator-5556 is free") and stop anything that might hang it again
   (for example a loop of `adb shell dumpsys` checks).
 
+## Emulator run rules: stop the app and the emulator when the test is over
+
+Owner's rule (2026-11-25). **Read this section before every emulator or simulator run.** The rule in short:
+
+> After a test and its screenshots are finished, immediately kill the app and the emulator process. Start the emulator
+> again only when it is needed. Never leave the app running or the emulator process alive after the task is done.
+
+- **Before a run:** start the emulator only for the test that needs it; note which emulator you started yourself.
+- **After the last screenshot or log is saved:** force-stop the app (`adb -s <serial> shell am force-stop <package>`,
+  `hdc shell aa force-stop <bundle>`), then end the emulator process you started (`adb -s <serial> emu kill` and wait
+  for `qemu-system-x86_64` to exit; for HarmonyOS end `Emulator.exe` for that device only). Do this at the end of the
+  task, also when the test failed, and also for a background worker.
+- **Next run:** start the emulator again (cold boot as in "Shared emulators" above); do not keep it alive "for later".
+- **Shared emulators:** when another session is using the emulator (its app is in the foreground, or it asked you to
+  leave it), do not kill its app or the emulator; tell that session "done, <serial> is free" and let it end the
+  process. An emulator whose last user is you is yours to stop.
+- Restore the emulator settings you changed (for example the Android night mode back to `uimode night no`) before you
+  stop the app.
+
 ## Screenshots of local builds and CI/CD
 
 These rules cover every screenshot: local simulator or device runs and CI/CD artifacts.
