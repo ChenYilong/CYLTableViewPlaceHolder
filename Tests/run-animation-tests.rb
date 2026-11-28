@@ -54,6 +54,11 @@ Dir.mktmpdir('cyl-placeholder-animation-tests-') do |dir|
     use_frameworks! :linkage => :#{linkage}
     target 'AnimationTests' do
       pod 'CYLAnimatedItem', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '#{tabbar_sha}'
+      # The commit splits CYLBadge and CYLUtils out (CYLAnimatedItem/Core depends on them; CYLUtils needs CYLDeallocBlockExecutor ~> 1.4,
+      # which is not on the trunk): pinned the same way as in Tests/run-tests.rb.
+      pod 'CYLBadge', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '#{tabbar_sha}'
+      pod 'CYLUtils', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '#{tabbar_sha}'
+      pod 'CYLDeallocBlockExecutor', :git => 'https://github.com/ChenYilong/CYLDeallocBlockExecutor.git', :commit => '4276a6dab5a428ccc3a5f3f347eab991881fb97c'
       pod 'CYLTableViewPlaceHolder/LottieSwift', :path => #{root.dump}
       pod 'CYLTableViewPlaceHolder/GIF', :path => #{root.dump}
       pod 'CYLTableViewPlaceHolder/#{ENV.fetch('PAG_SUBSPEC', 'PAG')}', :path => #{root.dump}

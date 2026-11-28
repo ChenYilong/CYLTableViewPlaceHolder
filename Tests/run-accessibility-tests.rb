@@ -59,10 +59,11 @@ Dir.mktmpdir('cyl-placeholder-accessibility-') do |dir|
   app.resources_build_phase.add_file_reference(project.main_group.new_file(File.join(core_dir, 'CYLTableViewPlaceHolder.bundle')))
   # CYLPlaceholderView is a subclass of CYLTabBarController's CYLAnimatedItemView: link and embed its framework.
   system('bash', File.join(root, 'scripts/cyltabbarcontroller-xcframework.sh'), 'simulator') || abort('CYLTabBarController.xcframework failed to build')
-  # Newer CYLTabBarController commits split CYLAnimatedItem into its own framework; link it too when it was built.
+  # Newer CYLTabBarController commits split CYLAnimatedItem into its own framework, and (since 8f0302d6) CYLBadge and CYLUtilsKit
+  # (which CYLAnimatedItem links) too; link and embed each one that was built.
   embed = app.new_copy_files_build_phase('Embed Frameworks')
   embed.symbol_dst_subfolder_spec = :frameworks
-  %w[CYLTabBarController CYLAnimatedItem].each do |name|
+  %w[CYLTabBarController CYLAnimatedItem CYLBadge CYLUtilsKit].each do |name|
     path = File.join(root, "Carthage/Build/#{name}.xcframework")
     next unless File.exist?(path)
     ref = project.main_group.new_file(path)
