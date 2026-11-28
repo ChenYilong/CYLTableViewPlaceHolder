@@ -108,4 +108,6 @@ export const CYLPlaceholderStringsKo: Record<string, string> = {
   "scenario_notification_permission_denied_title": "알림이 꺼져 있어요",
   "scenario_notification_permission_denied_hint": "메시지를 제때 받으려면 설정에서 알림을 켜 주세요.",
   "status_network_unavailable": "네트워크를 사용할 수 없습니다. 네트워크 설정을 확인하세요",
+  "resource_missing": "리소스 누락: %s (%s)",
+  "resources_missing": "리소스 누락: %1$s 외 %2$d개",
 };

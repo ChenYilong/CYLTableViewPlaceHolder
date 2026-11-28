@@ -255,6 +255,9 @@ module.exports = {
   "CYLScenarioPlaybackPlayAll": "Відтворити все",
   "CYLScenarioPlaybackSpeed": "Швидкість",
   "CYLScenarioPlaybackLoop": "Повтор",
+  "CYLScenarioTitleMissingResource": "Немає файлу анімації",
+  "CYLScenarioMissingResourceAdd": "Додати ще один файл",
+  "CYLScenarioMissingResourceFix": "Завантажити файл",
   "CYLRefreshHeaderIdleText": "🍬 Потягніть (власна таблиця)",
   "CYLRefreshHeaderPullingText": "🍬 Відпустіть (власна таблиця)",
   "CYLRefreshHeaderRefreshingText": "🍬 Завантаження (власна таблиця)"

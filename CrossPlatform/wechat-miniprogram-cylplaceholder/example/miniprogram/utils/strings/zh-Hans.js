@@ -255,6 +255,9 @@ module.exports = {
   "CYLScenarioPlaybackPlayAll": "全部播放",
   "CYLScenarioPlaybackSpeed": "倍速",
   "CYLScenarioPlaybackLoop": "循环",
+  "CYLScenarioTitleMissingResource": "动画文件缺失",
+  "CYLScenarioMissingResourceAdd": "再添加一个缺失文件",
+  "CYLScenarioMissingResourceFix": "加载文件",
   "CYLRefreshHeaderIdleText": "🍬 下拉（自定义文字表）",
   "CYLRefreshHeaderPullingText": "🍬 松开（自定义文字表）",
   "CYLRefreshHeaderRefreshingText": "🍬 加载中（自定义文字表）"

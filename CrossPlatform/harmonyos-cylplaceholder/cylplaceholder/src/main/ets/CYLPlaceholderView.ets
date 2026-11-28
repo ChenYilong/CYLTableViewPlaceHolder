@@ -76,6 +76,7 @@ import {
   CYLPlaceholderPlayableContentView,
   CYLPlaceholderRegisterAnimationFactory
 } from './CYLPlaceholderAnimation';
+import { CYLPlaceholderResourceReporter } from './CYLPlaceholderResourceReporter';
 import {
   CYLPlaceholderAccentColor,
   CYLPlaceholderButtonStyle,
@@ -389,6 +390,10 @@ export class CYLPlaceholderViewModel {
     const bundled = CYLPlaceholderViewModel.pathForBundledAnimation(name);
     const path = bundled !== null ? bundled : name;
     const side = Math.max(1, this.imageSide);
+    if (CYLPlaceholderResourceReporter.enabled && !CYLPlaceholderAnimationFileExists(path)) {
+      // The red status bar names it (CYLPlaceholderStatusController.cyl_showsMissingResources); the player is still tried.
+      CYLPlaceholderResourceReporter.sharedReporter.report(name, 'file not found', this);
+    }
     const factory = CYLPlaceholderAnimationFactoryForURL(path);
     let player: CYLPlaceholderAnimationPlayer | null = null;
     if (factory !== null) {
@@ -413,11 +418,16 @@ export class CYLPlaceholderViewModel {
       if (this.animationPlayer === made) {
         this.animationFailed = true;
         this.animationReady = false;
+        CYLPlaceholderResourceReporter.sharedReporter.report(name, 'unreadable', this);
       }
     };
     made.readyHandler = () => {
       if (this.animationPlayer === made) {
         this.animationReady = true;
+        // An animator can be ready for a file that is not there: clear the report only for a file that exists.
+        if (CYLPlaceholderResourceReporter.enabled && CYLPlaceholderAnimationFileExists(path)) {
+          CYLPlaceholderResourceReporter.sharedReporter.resolve(name, this);
+        }
         this.cyl_runAnimationCommand();
       }
     };
@@ -454,8 +464,10 @@ export class CYLPlaceholderViewModel {
     }
     const bundled = CYLPlaceholderViewModel.pathForBundledAnimation(path);
     if (!CYLPlaceholderAnimationFileExists(bundled !== null ? bundled : path)) {
+      CYLPlaceholderResourceReporter.sharedReporter.report(path, 'file not found', this);
       return false;
     }
+    CYLPlaceholderResourceReporter.sharedReporter.resolve(path, this);
     const previous = this.animationFileName;
     this.animationFileName = path;
     this.cyl_releaseAnimation();
@@ -1005,6 +1017,7 @@ export class CYLPlaceholderAnimatedItem {
   /** Stops and drops the player and the registration. */
   static detach(model: CYLPlaceholderViewModel): void {
     model.cyl_releaseAnimation();
+    CYLPlaceholderResourceReporter.sharedReporter.removeSource(model);
     cylReleaseAnimatedItemModel(model);
   }
 

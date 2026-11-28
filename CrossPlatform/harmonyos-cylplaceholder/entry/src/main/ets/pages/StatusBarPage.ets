@@ -2,7 +2,8 @@
 // (CYLPlaceholderStatusController + CYLPlaceholderStatusPage). One display value chooses what shows (the bottom
 // toolbar's segmented control): bar + placeholder (All), bar only (StatusBar, empty list), placeholder only
 // (Placeholder), bar + list (StatusBar with 12 rows). "Network" makes the bar follow the network (shows while
-// offline) and reports the current status; "File" applies one of StatusBar/*.json.
+// offline) and reports the current status; "File" applies one of StatusBar/*.json; "Missing animation file" loads an
+// animation file that is not there, and the bar names it (cyl_showsMissingResources: `Missing resource: x (file not found)`).
 import {
   CYLPlaceholderAction,
   CYLPlaceholderActionHandler,
@@ -16,7 +17,10 @@ import {
   CYLPlaceholderStatusController,
   CYLPlaceholderStatusDisplay,
   CYLPlaceholderStatusPage,
-  CYLPlaceholderStatusViewModel
+  CYLPlaceholderStatusViewModel,
+  CYLPlaceholderStyle,
+  CYLPlaceholderResourceReporter,
+  CYLPlaceholderViewModel
 } from 'cylplaceholder';
 import { showFeedback, t } from '../common/L10n';
 import { readRawText } from '../common/RawFile';
@@ -39,6 +43,8 @@ export struct StatusBarPage {
   @State followsNetwork: boolean = false;
   @State status: CYLPlaceholderStatusController = new CYLPlaceholderStatusController();
   @State list: CYLPlaceholderListController = new CYLPlaceholderListController(() => this.rows.length);
+  /** The view that loads the file that is not there (its report goes away with it). */
+  private missingDemo: CYLPlaceholderViewModel = CYLPlaceholderViewModel.initWithStyleText(CYLPlaceholderStyle.Empty, null);
 
   aboutToAppear(): void {
     const context = this.getUIContext();
@@ -48,12 +54,15 @@ export struct StatusBarPage {
     this.list.cyl_placeholderViewBlock((l: CYLPlaceholderListController) =>
     CYLPlaceholderStackViewModel.initWithScenario(CYLPlaceholderScenario.NetworkUnavailable, actions));
     this.status.cyl_placeholderScrollView = this.list;
+    this.status.cyl_showsMissingResources = true;
     this.installBarTap();
     this.apply(0);
   }
 
   aboutToDisappear(): void {
     this.status.cyl_showsStatusViewWhenOffline = false;
+    this.status.cyl_showsMissingResources = false;
+    CYLPlaceholderResourceReporter.sharedReporter.removeSource(this.missingDemo);
   }
 
   /** CYLPlaceholderStatusViewDelegate statusViewClicked: (CYLChatKit reconnects here). */
@@ -85,6 +94,11 @@ export struct StatusBarPage {
     monitor.startMonitoring();
     showFeedback(this.getUIContext(), t('CYLScenarioFormatNetworkStatus',
       CYLPlaceholderNetworkMonitor.nameForStatus(monitor.networkStatus)));
+  }
+
+  /** Loads an animation file that does not exist: the core reports it and the bar names it. */
+  private loadMissingFile(): void {
+    this.missingDemo.setAnimationFile('CYLMissingDemo.pag');
   }
 
   /** The action sheet of StatusBar/*.json, with Cancel. */
@@ -126,6 +140,7 @@ export struct StatusBarPage {
       BarButton(t(this.followsNetwork ? 'CYLScenarioStatusFollowingNetwork' : 'CYLScenarioStatusFollowNetwork'),
         () => this.toggleNetwork())
       BarButton(t('CYLScenarioActionShowFile'), () => this.showFiles())
+      BarButton(t('CYLScenarioTitleMissingResource'), () => this.loadMissingFile())
     }
     .height('100%')
   }

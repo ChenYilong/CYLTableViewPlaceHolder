@@ -107,5 +107,7 @@ module.exports = {
   "scenario_bluetooth_permission_denied_hint": "Allow Bluetooth in Settings to connect to nearby devices.",
   "scenario_notification_permission_denied_title": "Notifications are off",
   "scenario_notification_permission_denied_hint": "Turn on notifications in Settings to get messages in time.",
-  "status_network_unavailable": "Network unavailable, Check network"
+  "status_network_unavailable": "Network unavailable, Check network",
+  "resource_missing": "Missing resource: %s (%s)",
+  "resources_missing": "Missing resources: %1$s +%2$d more"
 }

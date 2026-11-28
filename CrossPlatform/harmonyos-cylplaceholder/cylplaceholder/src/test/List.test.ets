@@ -11,6 +11,7 @@ import refreshApiRowsTest from './CYLRefreshApiRows.test';
 import swiftAPITest from './CYLSwiftAPI.test';
 import playbackControlsTest from './CYLPlaybackControls.test';
 import binaryPropertyListTest from './CYLBinaryPropertyList.test';
+import placeholderResourceReporterTest from './CYLPlaceholderResourceReporter.test';
 
 export default function testsuite() {
   placeholderCoreTest();
@@ -26,4 +27,5 @@ export default function testsuite() {
   swiftAPITest();
   playbackControlsTest();
   binaryPropertyListTest();
+  placeholderResourceReporterTest();
 }

@@ -108,4 +108,6 @@ export const CYLPlaceholderStringsJa: Record<string, string> = {
   "scenario_notification_permission_denied_title": "通知がオフです",
   "scenario_notification_permission_denied_hint": "メッセージをすぐに受け取るには、設定で通知をオンにしてください。",
   "status_network_unavailable": "ネットワークに接続できません。ネットワーク設定を確認してください",
+  "resource_missing": "リソースが見つかりません：%s（%s）",
+  "resources_missing": "リソースが見つかりません：%1$s ほか%2$d件",
 };
